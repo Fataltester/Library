@@ -7,8 +7,12 @@ import org.junit.jupiter.api.*;
 
 import edu.eci.cvds.tdd.library.book.Book;
 import edu.eci.cvds.tdd.library.user.User;
-import edu.eci.cvds.tdd.library.loan.*;
+import edu.eci.cvds.tdd.library.loan.Loan;
+import edu.eci.cvds.tdd.library.loan.LoanStatus;
 import edu.eci.cvds.tdd.library.Library;
+
+import java.time.LocalDateTime;
+
 
 public class LibraryTest {
     private Library library;
@@ -23,6 +27,8 @@ public class LibraryTest {
         user.setName("juan");
         book = new Book("java", "libECI","1212");
     }
+
+    //Test de el metodo addBook
 
     @Test
     public void testAddBookWhenNotExist() {
@@ -83,4 +89,86 @@ public class LibraryTest {
         Book otherBook = new Book("python", "libECI","1212");
         assertFalse(library.addBook(otherBook));
     }
+
+    //Test de el metodo loanABook
+
+    @Test
+    public void testLoanABook(){
+        try {
+            library.addBook(book);
+            library.addUser(user);
+            Loan initial = library.loanABook(user.getId(), book.getIsbn());
+            assertEquals(LoanStatus.ACTIVE, initial.getStatus());
+            assertEquals(LocalDateTime.now(), initial.getLoanDate());
+        }catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNotLoanABookWhenUserNotExist() {
+        library.addBook(book);
+        try {
+            library.loanABook(user.getId(), book.getIsbn());
+            fail("Should have thrown exception");
+        }catch (IllegalStateException e) {
+            assertEquals(e.getMessage(), "User not found");
+        }
+    }
+
+    @Test
+    public void testNotLoanABookWhenBookNotExist() {
+        library.addUser(user);
+        try {
+            library.loanABook(user.getId(), book.getIsbn());
+            fail("Should have thrown exception");
+        }catch (IllegalStateException e) {
+            assertEquals(e.getMessage(), "Book not found");
+        }
+    }
+
+    @Test
+    public void testNotLoanABookWhenUserHasIt() {
+        library.addBook(book);
+        library.addBook(book);
+        library.addUser(user);
+        try {
+            library.loanABook(user.getId(), book.getIsbn());
+            library.loanABook(user.getId(), book.getIsbn());
+            fail("Should have thrown exception");
+        }catch (IllegalStateException e) {
+            assertEquals(e.getMessage(), "User already has this book");
+        }
+    }
+
+    @Test
+    public void testNotLoanABookWhenBookIsNotAvailable() {
+        User uTest = new User();
+        uTest.setId("101");
+        uTest.setName("santiago");
+        library.addBook(book);
+        library.addUser(user);
+        library.addUser(uTest);
+        try {
+            library.loanABook(user.getId(), book.getIsbn());
+            library.loanABook(uTest.getId(), book.getIsbn());
+            fail("Should have thrown exception");
+        }catch (IllegalStateException e) {
+            assertEquals(e.getMessage(), "Book is not available");
+        }
+    }
+
+    @Test
+    public void testNotLoanABookWhenUserOrBookIsNull() {
+        library.addBook(book);
+        library.addUser(user);
+        try{
+            library.loanABook(null, null);
+            fail("Should have thrown exception");
+        }catch (IllegalStateException e) {
+            assertEquals(e.getMessage(), "User or Book is null");
+        }
+    }
+
+    //test del metodo returnBook
 }
