@@ -99,7 +99,8 @@ public class LibraryTest {
             library.addUser(user);
             Loan initial = library.loanABook(user.getId(), book.getIsbn());
             assertEquals(LoanStatus.ACTIVE, initial.getStatus());
-            assertEquals(LocalDateTime.now(), initial.getLoanDate());
+            assertEquals(user, initial.getUser());
+            assertEquals(book, initial.getBook());
         }catch (Exception e){
             fail(e.getMessage());
         }
