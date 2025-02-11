@@ -6,6 +6,7 @@ import edu.eci.cvds.tdd.library.loan.LoanStatus;
 import edu.eci.cvds.tdd.library.user.User;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +85,7 @@ public class Library {
             }
         }
         for (Book book : books.keySet()){
-            if(book.getIsbn().equals(isbn) && books.get(book) > 0){
+            if(book.getIsbn().equals(isbn)){
                 actualBook = book;
                 bookFound = true;
                 break;
@@ -97,7 +98,7 @@ public class Library {
             throw new IllegalStateException("Book not found");
         }
         for (Loan loan: loans){
-            if (loan.getStatus().equals(LoanStatus.ACTIVE) && loan.getBook().equals(actualBook) && loan.getUser() != actualUser){
+            if (loan.getStatus().equals(LoanStatus.ACTIVE) && loan.getBook().equals(actualBook) && loan.getUser() != actualUser || books.get(actualBook) < 0){
                 throw new IllegalStateException("Book is not available");
             }
             if (loan.getUser().equals(actualUser) && loan.getBook().equals(actualBook) && loan.getStatus().equals(LoanStatus.ACTIVE)){
@@ -105,9 +106,10 @@ public class Library {
             }
         }
         Loan loanedBook = new Loan();
+        books.put(actualBook, books.get(actualBook) - 1);
         loanedBook.setUser(actualUser);
         loanedBook.setBook(actualBook);
-        loanedBook.setLoanDate(LocalDateTime.now());
+        loanedBook.setLoanDate(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
         loanedBook.setStatus(LoanStatus.ACTIVE);
         loans.add(loanedBook);
         return loanedBook;
@@ -123,14 +125,34 @@ public class Library {
      * @return the loan with the RETURNED status.
      */
     public Loan returnLoan(Loan loan) {
-        //TODO Implement the login of loan a book to a user based on the UserId and the isbn.
-        return null;
+        if (loan == null) {
+            throw new IllegalStateException("loan is null");
+        }
+        if (loan.getStatus().equals(LoanStatus.RETURNED)) {  throw new IllegalStateException("loan is already returned"); }
+        boolean loanFound = false;
+        for(Loan loans : loans){
+            if(loans.equals(loan)){
+                loanFound = true;
+                break;
+            }
+        }
+        if(!loanFound){ throw new IllegalStateException("loan not found"); }
+        addBook(loan.getBook());
+        loan.setReturnDate(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
+        loan.setStatus(LoanStatus.RETURNED);
+        loans.remove(loan);
+        return loan;
     }
     public boolean addUser(User user) {
         return users.add(user);
     }
 
+    public boolean addLoan(Loan loan) {
+        return loans.add(loan);
+    }
+
     public Map<Book, Integer> getBooks() {
         return books;
     }
+    public List<Loan> getLoans() {return loans;}
 }
