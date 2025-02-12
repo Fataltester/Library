@@ -10,13 +10,15 @@ import edu.eci.cvds.tdd.library.user.User;
 import edu.eci.cvds.tdd.library.loan.Loan;
 import edu.eci.cvds.tdd.library.loan.LoanStatus;
 import edu.eci.cvds.tdd.library.Library;
-
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 
 public class LibraryTest {
     private Library library;
     private Book book;
     private User user;
+    private Loan loan;
 
     @BeforeEach
     public void setUp() {
@@ -25,6 +27,7 @@ public class LibraryTest {
         user.setId("100");
         user.setName("juan");
         book = new Book("java", "libECI","1212");
+        loan = new Loan();
     }
 
     //Test de el metodo addBook
@@ -37,7 +40,7 @@ public class LibraryTest {
     @Test
     public void testAddIncreaseBookWhenNotExist() {
         library.addBook(book);
-        assertEquals(library.getBooks().get(book), 1);
+        assertEquals(1, library.getBooks().get(book));
     }
 
     @Test
@@ -50,7 +53,7 @@ public class LibraryTest {
     public void testAddIncreaseBook() {
         library.addBook(book);
         library.addBook(book);
-        assertEquals(library.getBooks().get(book), 2);
+        assertEquals(2, library.getBooks().get(book));
     }
 
     @Test
@@ -63,8 +66,8 @@ public class LibraryTest {
         library.addBook(book);
         Book otherBook = new Book("python", "libECI","1213");
         library.addBook(otherBook);
-        assertEquals(library.getBooks().get(book), 1);
-        assertEquals(library.getBooks().get(otherBook), 1);
+        assertEquals(1, library.getBooks().get(book));
+        assertEquals(1, library.getBooks().get(otherBook));
     }
 
     @Test
@@ -100,6 +103,7 @@ public class LibraryTest {
             assertEquals(LoanStatus.ACTIVE, initial.getStatus());
             assertEquals(user, initial.getUser());
             assertEquals(book, initial.getBook());
+            assertEquals(initial.getLoanDate(),LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
         }catch (Exception e){
             fail(e.getMessage());
         }
@@ -112,7 +116,7 @@ public class LibraryTest {
             library.loanABook(user.getId(), book.getIsbn());
             fail("Should have thrown exception");
         }catch (IllegalStateException e) {
-            assertEquals(e.getMessage(), "User not found");
+            assertEquals("User not found", e.getMessage());
         }
     }
 
@@ -123,7 +127,7 @@ public class LibraryTest {
             library.loanABook(user.getId(), book.getIsbn());
             fail("Should have thrown exception");
         }catch (IllegalStateException e) {
-            assertEquals(e.getMessage(), "Book not found");
+            assertEquals("Book not found", e.getMessage());
         }
     }
 
@@ -137,7 +141,7 @@ public class LibraryTest {
             library.loanABook(user.getId(), book.getIsbn());
             fail("Should have thrown exception");
         }catch (IllegalStateException e) {
-            assertEquals(e.getMessage(), "User already has this book");
+            assertEquals("User already has this book", e.getMessage());
         }
     }
 
@@ -154,7 +158,7 @@ public class LibraryTest {
             library.loanABook(uTest.getId(), book.getIsbn());
             fail("Should have thrown exception");
         }catch (IllegalStateException e) {
-            assertEquals(e.getMessage(), "Book is not available");
+            assertEquals("Book is not available", e.getMessage());
         }
     }
 
@@ -166,9 +170,72 @@ public class LibraryTest {
             library.loanABook(null, null);
             fail("Should have thrown exception");
         }catch (IllegalStateException e) {
-            assertEquals(e.getMessage(), "User or Book is null");
+            assertEquals("User or Book is null", e.getMessage());
         }
     }
 
     //test del metodo returnBook
+
+    @Test
+    public void testNotReturnABookWhenLoanIsNull(){
+        library.addLoan(loan);
+        try{
+            library.returnLoan(null);
+            fail("Should have thrown exception");
+        }catch (IllegalStateException e){
+            assertEquals("loan is null", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testReturnALoan(){
+        loan.setBook(book);
+        loan.setUser(user);
+        loan.setStatus(LoanStatus.ACTIVE);
+        library.addLoan(loan);
+        try{
+            library.returnLoan(loan);
+            assertEquals(LoanStatus.RETURNED, loan.getStatus());
+            assertFalse(library.getLoans().contains(loan));
+            assertEquals(loan.getReturnDate(),LocalDateTime.now().truncatedTo(ChronoUnit.DAYS));
+            assertFalse(library.getLoans().contains(loan));
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNotReturnALoanAlreadyReturned(){
+        loan.setBook(book);
+        loan.setUser(user);
+        loan.setStatus(LoanStatus.ACTIVE);
+        library.addLoan(loan);
+        loan.setBook(book);
+        try{
+            library.returnLoan(loan);
+            library.returnLoan(loan);
+            fail("Should have thrown exception");
+        }catch (IllegalStateException e){
+            assertEquals("loan is already returned", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testAddIncreaseBooksWhenLoan(){
+        loan.setBook(book);
+        loan.setUser(user);
+        loan.setStatus(LoanStatus.ACTIVE);
+        Loan tLoan = new Loan();
+        User uTest = new User();
+        uTest.setId("101");
+        uTest.setName("santiago");
+        tLoan.setBook(book);
+        tLoan.setUser(uTest);
+        tLoan.setStatus(LoanStatus.ACTIVE);
+        library.addLoan(loan);
+        library.addLoan(tLoan);
+        library.returnLoan(loan);
+        library.returnLoan(tLoan);
+        assertEquals(2, library.getBooks().get(book));
+    }
 }
