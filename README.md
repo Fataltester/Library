@@ -139,3 +139,20 @@ Ahora, estamos manejando el entorno intellij por medio de los pluggins
 
 ![image](https://github.com/user-attachments/assets/08450b2e-7b7d-4e2f-91ed-2c31aaf5bfbd)
 
+Se reconstruye el proyecto usando "mvn package"
+
+![image](https://github.com/user-attachments/assets/caba4779-5af8-4902-a736-456f84fc457b)
+
+una vez descargado el plugin de SonarQube, se utiliza el comando:
+```
+mvn verify sonar:sonar -D sonar.token=sqa_4e8080da17edea921081be4f5a348d1941683156
+```
+![image](https://github.com/user-attachments/assets/d992f30d-155a-46b0-bd4d-4d9546097d6a)
+
+Para terminar, el reporte de SonarQube se ve de esta forma:
+
+![image](https://github.com/user-attachments/assets/00a05299-c1a8-41c2-b61e-1f390247bac4)
+
+Y desde Docker se ve de esta forma el reporte:
+
+![image](https://github.com/user-attachments/assets/7c274445-e0c7-4ec9-bc42-d4f0ca8d8c9f)
