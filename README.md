@@ -125,6 +125,25 @@ ahora vamos a modificar los tokens
 
 ![image](https://github.com/user-attachments/assets/6146b7a6-cf4d-4443-8e9b-190a64e020bf)
 
+vamos a generar un token de prueba
+
+![image](https://github.com/user-attachments/assets/1e207f3d-cda1-4e86-9535-74f9da64f220)
+
+![image](https://github.com/user-attachments/assets/ec957853-e094-4a90-8d2c-dbe49f90400b)
+
+Ahora, estamos manejando el entorno intellij por medio de los pluggins
+
+![image](https://github.com/user-attachments/assets/43dd023d-a5c1-4b1a-9ca8-dd06a122e4d4)
+
+![image](https://github.com/user-attachments/assets/13541d1a-a90a-4070-a1f8-7c89c6ad42dd)
+
+![image](https://github.com/user-attachments/assets/08450b2e-7b7d-4e2f-91ed-2c31aaf5bfbd)
+
+
+Ahora vamos a contruir el proyecto para generar el reporte JACOCO 
+
+
+
 
 
 
