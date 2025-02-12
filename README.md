@@ -89,4 +89,42 @@ La clase LibraryTest. java fue creada dentro de la ruta edu.eci.cvds.tdd.Library
 
 #### SONARQUBE
 
+Instalamos sonarqube por medio del siguiente link 
+
+https://docs.docker.com/desktop/setup/install/windows-install/
+
+![image](https://github.com/user-attachments/assets/16c71b1d-ee9e-424a-a95e-6bbbabc223d8)
+
+teniendo docker ya instalado, procedemos a realizar el comando "docker pull sonarqube"
+
+
+![image](https://github.com/user-attachments/assets/15ce8733-96e1-44a0-812e-08bb28291af6)
+
+utilizamos el comando docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest
+
+![image](https://github.com/user-attachments/assets/84e53b82-a904-4396-bf69-43a8b8baf407)
+
+la validación de que docker funciona se puede revisar tanto por consola "docker ps -a" como por la aplicación
+
+![image](https://github.com/user-attachments/assets/8c0ac2fd-8ed1-47fb-8476-813d682acb00)
+
+
+![image](https://github.com/user-attachments/assets/bb57fbba-1d86-4e56-a63f-ff76edf921e6)
+
+![image](https://github.com/user-attachments/assets/8a5b0245-13f1-447f-a0e7-718901397cc3)
+
+![image](https://github.com/user-attachments/assets/f5aa75a4-b366-4213-ab4b-077e596bb5cd)
+
+iniciamos sesion con las credenciales dadas, nueva contraseña: cvdsMG20251%
+
+![image](https://github.com/user-attachments/assets/9547d45e-3090-4980-beb6-0499687c183a)
+
+ahora vamos a modificar los tokens
+
+* Account -> security -> generate token.
+
+![image](https://github.com/user-attachments/assets/6146b7a6-cf4d-4443-8e9b-190a64e020bf)
+
+
+
 
